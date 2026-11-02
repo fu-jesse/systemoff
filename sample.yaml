@@ -1,0 +1,50 @@
+sample:
+  description: enter System OFF on every boot, with optional GRTC / GPIO wake-up and retained RAM
+  name: system_off
+common:
+  sysbuild: true
+  build_only: true
+  tags: system_off
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54lm20dk/nrf54lm20b/cpuapp
+    - nrf54ls05dk/nrf54ls05a/cpuapp
+    - nrf54ls05dk/nrf54ls05b/cpuapp
+tests:
+  # name: sample.system_off[.log].<pin|grtc|ret>   (the LF clock is always the LFXO)
+  #   .log  : prj.conf, log on uart20      no .log : FILE_SUFFIX=release, no log, uart20 disabled
+  #           (the release scenarios have no log part in the name, which keeps the build path short)
+  #   The modes are snippets (snippets/), so twister needs the application directory as a snippet root:
+  #     twister ... --extra-args SNIPPET_ROOT=<this directory>
+  #   pin   : pinwake snippet: sw0 wake-up, system clock (GRTC, LF clock) disabled before System OFF
+  #           (Kconfig default APP_SYS_CLOCK_DISABLE)
+  #   grtc  : grtcwake snippet: GRTC wake-up
+  #   ret   : pinwake + retram snippets: sw0 wake-up, 4 KB retained RAM; the retram snippet adds
+  #           snippets/retram/<soc>.overlay for the board, which carves the region out of the SRAM, so the
+  #           other builds give cpuapp all the RAM
+  sample.system_off.log.pin:
+    tags: system_off
+    required_snippets:
+      - pinwake
+  sample.system_off.log.grtc:
+    required_snippets:
+      - grtcwake
+  sample.system_off.log.ret:
+    required_snippets:
+      - pinwake
+      - retram
+  sample.system_off.pin:
+    tags: system_off
+    extra_args: FILE_SUFFIX=release
+    required_snippets:
+      - pinwake
+  sample.system_off.grtc:
+    extra_args: FILE_SUFFIX=release
+    required_snippets:
+      - grtcwake
+  sample.system_off.ret:
+    extra_args: FILE_SUFFIX=release
+    required_snippets:
+      - pinwake
+      - retram

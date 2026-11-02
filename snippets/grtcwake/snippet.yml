@@ -1,0 +1,3 @@
+name: grtcwake
+append:
+  EXTRA_CONF_FILE: grtcwake.conf

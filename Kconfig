@@ -1,0 +1,53 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+mainmenu "System OFF sample"
+
+config APP_USE_RETAINED_MEM
+	bool "Keep a boot counter in retained RAM across System OFF"
+	select RETAINED_MEM
+	select CRC
+	help
+	  Use the retained_mem driver and the 4 KB retained region from
+	  snippets/retram/<soc>.overlay. Build with the retram snippet (-S retram),
+	  which adds the overlay for the board; the build fails in
+	  src/retained.c without it. Without this option no RAM is retained in
+	  System OFF and cpuapp gets all the RAM.
+
+config APP_GRTC_WAKEUP_ENABLE
+	bool "Use GRTC to wake up the device from System OFF"
+	help
+	  The low-frequency clock is the LFXO.
+
+config APP_GRTC_WAKEUP_SECONDS
+	int "GRTC wake-up time in seconds"
+	default 10
+	depends on APP_GRTC_WAKEUP_ENABLE
+
+config APP_SYS_CLOCK_DISABLE
+	bool "Disable the system clock (GRTC and LF clock) right before System OFF"
+	depends on SYSTEM_TIMER_HAS_DISABLE_SUPPORT && !APP_GRTC_WAKEUP_ENABLE
+	default y
+	help
+	  Calls sys_clock_disable() just before entering System OFF. Saves a little
+	  current, but GRTC no longer runs, so it cannot be combined with the GRTC
+	  wake-up. Nothing may log or use kernel timeouts after the call.
+
+config APP_GPIO_WAKEUP_ENABLE
+	bool "Use sw0 to wake up the device from System OFF"
+	depends on $(dt_alias_enabled,sw0)
+	select GPIO
+	help
+	  Off by default; the pinwake snippet turns it on.
+
+config APP_GPIO_RELEASE_TIMEOUT_MS
+	int "Time to wait for sw0 to be released before entering System OFF, in ms"
+	default 5000
+	depends on APP_GPIO_WAKEUP_ENABLE
+	help
+	  A level-active wake-up fires at once while the button is held. If the button
+	  is still pressed after this time, System OFF is entered without the sw0
+	  wake-up (a warning is logged).
+
+source "Kconfig.zephyr"

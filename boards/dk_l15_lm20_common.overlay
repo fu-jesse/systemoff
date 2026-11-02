@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* nRF54L15 and nRF54LM20 DKs (nRF54LS05 has none of these nodes) */
+
+#include "dk_common.overlay"
+
+/* Remove the external SPI flash */
+/delete-node/ &mx25r64;
+
+/* No SPI/I2C devices in use */
+&spi00 {
+	status = "disabled";
+};
+
+/* Use NFC pins as regular GPIOs */
+&nfct {
+	status = "disabled";
+	nfct-pins-as-gpios;
+};

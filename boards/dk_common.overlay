@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Common to all DKs: remove LEDs, buttons and PWM, suspend uart20 at boot.
+ * The buttons (and the sw0 alias) are deleted; the pinwake snippet adds button0 back as the
+ * GPIO wake-up source.
+ */
+
+/ {
+	/delete-node/ leds;
+	/delete-node/ pwmleds;
+	/delete-node/ buttons;
+
+	aliases {
+		/delete-property/ led0;
+		/delete-property/ led1;
+		/delete-property/ led2;
+		/delete-property/ led3;
+		/delete-property/ pwm-led0;
+		/delete-property/ sw0;
+		/delete-property/ sw1;
+		/delete-property/ sw2;
+		/delete-property/ sw3;
+		/delete-property/ mcuboot-button0;
+		/delete-property/ mcuboot-led0;
+	};
+};
+
+/* PWM is not used (pwmleds removed above) */
+&pwm20 {
+	status = "disabled";
+};
+
+/* Suspend uart20 at boot; the log backend resumes it only while printing */
+&uart20 {
+	zephyr,pm-device-runtime-auto;
+};

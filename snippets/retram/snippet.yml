@@ -1,0 +1,19 @@
+name: retram
+append:
+  EXTRA_CONF_FILE: retram.conf
+boards:
+  nrf54l15dk/nrf54l15/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nrf54l15.overlay
+  nrf54lm20dk/nrf54lm20a/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nrf54lm20.overlay
+  nrf54lm20dk/nrf54lm20b/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nrf54lm20.overlay
+  nrf54ls05dk/nrf54ls05a/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nrf54ls05a.overlay
+  nrf54ls05dk/nrf54ls05b/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nrf54ls05b.overlay
